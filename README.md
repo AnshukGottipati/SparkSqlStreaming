@@ -96,6 +96,30 @@ By the end of this assignment, you should be able to:
 3. Parse the JSON payload into columns.
 4. Print the parsed data to the console (using .writeStream.format("console")).
 
+## **Explanations, Approach, and Output:**
+1. Parsed json response from dataGen into tables 
+2. Stored console information to output.txt in the task_1 directory
+
+```
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++-------+---------+-----------+-----------+---------+
+|trip_id|driver_id|distance_km|fare_amount|timestamp|
++-------+---------+-----------+-----------+---------+
++-------+---------+-----------+-----------+---------+
+
+-------------------------------------------
+Batch: 1
+-------------------------------------------
++------------------------------------+---------+-----------+-----------+-------------------+
+|trip_id                             |driver_id|distance_km|fare_amount|timestamp          |
++------------------------------------+---------+-----------+-----------+-------------------+
+|63f0ac3a-fd0b-46d7-b8ad-8495581ec80e|10       |31.04      |116.32     |2025-10-31 17:08:09|
+|d6d759bd-ddfb-44db-ae21-1d3c71d56b7a|54       |37.1       |97.48      |2025-10-31 17:08:10|
++------------------------------------+---------+-----------+-----------+-------------------+
+
+```
 ---
 
 ## **Task 2: Real-Time Aggregations (Driver-Level)**
@@ -112,6 +136,23 @@ By the end of this assignment, you should be able to:
 4. AVG(distance_km) as avg_distance
 5. Store the result in csv
 
+### **Explanations, Approach, and Output**
+1. Calculating the total fare amount and avg trip driven by each driver
+2. Aggregate the information and storing it as a csv for each batch
+
+```
+driver_id,total_fare,avg_distance
+7,41.26,49.4
+73,138.95,49.89
+16,71.74,13.26
+5,52.32,19.62
+41,135.31,24.305
+1,70.57,24.19
+37,141.12,21.06
+83,125.72,5.38
+91,43.66,9.72
+
+```
 ---
 
 ## **Task 3: Windowed Time-Based Analytics**
@@ -125,15 +166,55 @@ By the end of this assignment, you should be able to:
 2. Use Spark’s window function to aggregate over a 5-minute window, sliding by 1 minute, for the sum of fare_amount.
 3. Output the windowed results to csv.
 
+### **Explanations, Approach, and Output**
+1. Watermark to handle incoming late data
+2. computing sum of fare for a driver in a 5 min period
+3. Had to use update instead of append for the query to show partial aggregates.
+
+```
+driver_id,window_start,window_end,window_total_fare
+56,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,86.5
+93,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,196.7
+22,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,11.4
+81,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,108.29
+93,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,196.7
+93,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,196.7
+7,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,248.12
+96,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,206.64
+56,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,194.79000000000002
+7,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,239.06
+56,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,315.89
+56,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,315.89
+56,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,315.89
+7,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,44.43
+7,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,239.06
+7,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,239.06
+81,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,108.29
+93,2025-10-31T17:59:00.000Z,2025-10-31T18:04:00.000Z,196.7
+96,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,278.66
+22,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,11.4
+81,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,108.29
+22,2025-10-31T17:56:00.000Z,2025-10-31T18:01:00.000Z,296.28
+81,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,108.29
+22,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,50.44
+22,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,50.44
+96,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,206.64
+96,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,80.48
+96,2025-10-31T17:57:00.000Z,2025-10-31T18:02:00.000Z,206.64
+81,2025-10-31T18:00:00.000Z,2025-10-31T18:05:00.000Z,108.29
+93,2025-10-31T17:58:00.000Z,2025-10-31T18:03:00.000Z,196.7
+
+
+```
 ---
 
 ## 📬 Submission Checklist
 
-- [ ] Python scripts 
-- [ ] Output files in the `outputs/` directory  
-- [ ] Completed `README.md`  
-- [ ] Commit everything to GitHub Classroom  
-- [ ] Submit your GitHub repo link on canvas
+- [x] Python scripts 
+- [x] Output files in the `outputs/` directory  
+- [x] Completed `README.md`  
+- [x] Commit everything to GitHub Classroom  
+- [x] Submit your GitHub repo link on canvas
 
 ---
 
